@@ -26,7 +26,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   date_format: ^1.0.9
   equatable: ^1.2.5
-  provider: ^4.3.2+3
+  flutter_riverpod: ^0.12.1
   uuid: ^2.2.2
 
 dev_dependencies:

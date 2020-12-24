@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:todo_app_example/models/todo_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_app_example/providers/todo_provider.dart';
 
-import '../providers/todo_provider.dart';
+import '../models/todo_model.dart';
 import '../utils/routes.dart';
 
+
+final   todoProvider = StateNotifierProvider<TodoProvider>((ref) {
+    return TodoProvider( [ TodoModel(id:'1',task: 'debug code',date: DateTime.now().toString(),),]);
+});
+
 class TodoListPage extends StatelessWidget {
+final todos= watch(todoProvider.state);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,9 +20,7 @@ class TodoListPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16).copyWith(bottom: 0),
-        child: Consumer<TodoProvider>(
-          builder: (_, todoProvider, __) {
-            return todoProvider.todos.isEmpty
+        child:  todoProvider.todos.isEmpty
                 ? Center(
                     child: const Text(
                       'Empty todos!',
@@ -49,8 +53,7 @@ class TodoListPage extends StatelessWidget {
                       );
                     },
                   );
-          },
-        ),
+        
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),

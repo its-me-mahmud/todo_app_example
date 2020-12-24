@@ -1,67 +1,55 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/todo_model.dart';
 
-class TodoProvider extends ChangeNotifier {
-  var _uuid = Uuid();
-  String _id;
-  String _task;
-  DateTime _date;
-  List<TodoModel> _todos = [];
+class TodoProvider extends StateNotifier<List<TodoModel>> {
+  final _uuid = Uuid();
 
-  String get todo => _task;
-  DateTime get date => _date;
-  List<TodoModel> get todos => _todos;
+  TodoProvider(List<TodoModel> initialTodos) : super(initialTodos ?? []);
 
-  set changeDate(DateTime date) {
-    _date = date;
-    notifyListeners();
-  }
+  // loadTodos(TodoModel todoModel) {
+  //   if (todoModel != null) {
+  //     _id = todoModel.id;
+  //     _task = todoModel.task;
+  //     _date = DateTime.parse(todoModel.date);
+  //   } else {
+  //     _id = null;
+  //     _task = null;
+  //     _date = DateTime.now();
+  //   }
+  // }
 
-  set changeTask(String task) {
-    _task = task;
-    notifyListeners();
-  }
-
-  loadTodos(TodoModel todoModel) {
-    if (todoModel != null) {
-      _id = todoModel.id;
-      _task = todoModel.task;
-      _date = DateTime.parse(todoModel.date);
-    } else {
-      _id = null;
-      _task = null;
-      _date = DateTime.now();
-    }
-  }
-
-  void saveTodo() {
-    if (_id == null) {
-      _todos.add(TodoModel(
+  void saveTodo(String task, DateTime date) {
+    state = [
+      ...state,
+      TodoModel(
         id: _uuid.v4(),
-        task: _task,
-        date: _date.toIso8601String(),
-      ));
-      print('add: ${_uuid.v4().toString()}');
-      notifyListeners();
-    }
+        task: task,
+        date: date.toIso8601String(),
+      )
+    ];
+    print('add: ${_uuid.v4().toString()}');
   }
 
-  void updateTodo(String id) {
-    _todos.firstWhere((todo) => todo.id == id).copyWith(
-          id: id,
-          task: _task,
-          date: _date.toIso8601String(),
-        );
+  void updateTodo(String id, String task) {
+    state = [
+      for (final todoModel in state)
+        if (todoModel.id == id)
+          TodoModel(
+            id: todoModel.id,
+            task: task,
+            date: todoModel.date,
+          )
+        else
+          todoModel,
+    ];
     print('update: $id');
-    print(_task);
-    notifyListeners();
+    print(task);
   }
 
-  void removeTodo(String id) {
-    _todos.removeWhere((todo) => todo.id == id);
-    print('delete: $id');
-    notifyListeners();
+  void removeTodo(TodoModel todoModel) {
+    state = state.where(((todo) => todo.id != todoModel.id)).toList();
+    print('delete: ${todoModel.id}');
   }
 }
