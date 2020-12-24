@@ -38,12 +38,14 @@ class TodoProvider extends ChangeNotifier {
 
   void saveTodo() {
     if (_id == null) {
-      _todos.add(TodoModel(
-        id: _uuid.v4(),
-        task: _task,
-        date: _date.toIso8601String(),
-      ));
-      print('add: ${_uuid.v4().toString()}');
+      _todos.add(
+        TodoModel(
+          id: _uuid.v4(),
+          task: _task,
+          date: _date.toIso8601String(),
+        ),
+      );
+      // print('add: ${_uuid.v4().toString()}');
       notifyListeners();
     }
   }
@@ -55,7 +57,8 @@ class TodoProvider extends ChangeNotifier {
           date: _date.toIso8601String(),
         );
     print('update: $id');
-    print(_task);
+    print('task: $_task');
+    print('date: $_date');
     notifyListeners();
   }
 

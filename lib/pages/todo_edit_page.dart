@@ -74,10 +74,17 @@ class _TodoEditPageState extends State<TodoEditPage> {
               color: (widget.todoModel == null) ? Colors.green : Colors.blue,
               title: (widget.todoModel == null) ? 'Save' : 'Update',
               onPressed: () {
-                (widget.todoModel == null)
-                    ? todoProvider.saveTodo()
-                    : todoProvider.updateTodo(widget.todoModel.id);
-                Navigator.pop(context);
+                // (widget.todoModel == null)
+                //     ? todoProvider.saveTodo()
+                //     : todoProvider.updateTodo(widget.todoModel.id);
+                // Navigator.pop(context);
+                if (widget.todoModel == null) {
+                  todoProvider.saveTodo();
+                  Navigator.pop(context);
+                } else {
+                  todoProvider.updateTodo(widget.todoModel.id);
+                  Navigator.pop(context);
+                }
               },
             ),
             (widget.todoModel == null)
