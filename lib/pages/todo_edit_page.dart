@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/todo_model.dart';
 import '../providers/todo_provider.dart';
@@ -20,12 +20,8 @@ class _TodoEditPageState extends State<TodoEditPage> {
   @override
   void initState() {
     super.initState();
-    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
     if (widget.todoModel != null) {
       _taskController.text = widget.todoModel.task;
-      todoProvider.loadTodos(widget.todoModel);
-    } else {
-      todoProvider.loadTodos(null);
     }
   }
 
@@ -37,7 +33,6 @@ class _TodoEditPageState extends State<TodoEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.todoModel != null ? 'Edit todo' : 'Add todo'),
@@ -52,10 +47,9 @@ class _TodoEditPageState extends State<TodoEditPage> {
               minLines: 1,
               maxLines: 5,
               decoration: InputDecoration(
-                labelText: 'Todo',
-                hintText: 'Enter your todo',
+                labelText: 'Task',
+                hintText: 'Enter your task',
               ),
-              onChanged: (value) => todoProvider.changeTask = value,
             ),
             const SizedBox(height: 16),
             Row(
@@ -75,8 +69,10 @@ class _TodoEditPageState extends State<TodoEditPage> {
               title: (widget.todoModel == null) ? 'Save' : 'Update',
               onPressed: () {
                 (widget.todoModel == null)
-                    ? todoProvider.saveTodo()
-                    : todoProvider.updateTodo(widget.todoModel.id);
+                    ? context.read(todoProvider).saveTodo(_taskController.text)
+                    : context
+                        .read(todoProvider)
+                        .updateTodo(widget.todoModel.id, _taskController.text);
                 Navigator.pop(context);
               },
             ),
@@ -86,7 +82,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
                     color: Theme.of(context).errorColor,
                     title: 'Remove',
                     onPressed: () {
-                      todoProvider.removeTodo(widget.todoModel.id);
+                      context.read(todoProvider).removeTodo(widget.todoModel);
                       Navigator.pop(context);
                     },
                   ),

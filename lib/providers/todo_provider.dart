@@ -3,10 +3,14 @@ import 'package:uuid/uuid.dart';
 
 import '../models/todo_model.dart';
 
+final todoProvider = StateNotifierProvider<TodoProvider>((ref) {
+  return TodoProvider(initialTodos: []);
+});
+
 class TodoProvider extends StateNotifier<List<TodoModel>> {
   final _uuid = Uuid();
 
-  TodoProvider(List<TodoModel> initialTodos) : super(initialTodos ?? []);
+  TodoProvider({List<TodoModel> initialTodos}) : super(initialTodos ?? []);
 
   // loadTodos(TodoModel todoModel) {
   //   if (todoModel != null) {
@@ -20,13 +24,13 @@ class TodoProvider extends StateNotifier<List<TodoModel>> {
   //   }
   // }
 
-  void saveTodo(String task, DateTime date) {
+  void saveTodo(String task) {
     state = [
       ...state,
       TodoModel(
         id: _uuid.v4(),
         task: task,
-        date: date.toIso8601String(),
+        date: DateTime.now().toString(),
       )
     ];
     print('add: ${_uuid.v4().toString()}');
@@ -39,7 +43,7 @@ class TodoProvider extends StateNotifier<List<TodoModel>> {
           TodoModel(
             id: todoModel.id,
             task: task,
-            date: todoModel.date,
+            date: DateTime.now().toString(),
           )
         else
           todoModel,
