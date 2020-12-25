@@ -33,10 +33,22 @@ class _TodoEditPageState extends State<TodoEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
+    final _todoProvider = Provider.of<TodoProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.todoModel != null ? 'Edit todo' : 'Add todo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () {
+              _pickDate(context, _todoProvider).then((value) {
+                if (value != null) {
+                  _todoProvider.changeDate = value;
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16).copyWith(bottom: 0),
@@ -44,6 +56,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
+              autofocus: true,
               controller: _taskController,
               minLines: 1,
               maxLines: 5,
@@ -52,26 +65,14 @@ class _TodoEditPageState extends State<TodoEditPage> {
                 hintText: 'Enter your task',
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('data'),
-                ReusableButton(
-                  color: Theme.of(context).primaryColor,
-                  title: 'Choose Date',
-                  onPressed: () => chooseDate(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             ReusableButton(
               color: (widget.todoModel == null) ? Colors.green : Colors.blue,
               title: (widget.todoModel == null) ? 'Save' : 'Update',
               onPressed: () {
                 (widget.todoModel == null)
-                    ? todoProvider.saveTodo(_taskController.text)
-                    : todoProvider.updateTodo(
+                    ? _todoProvider.saveTodo(_taskController.text)
+                    : _todoProvider.updateTodo(
                         widget.todoModel.id, _taskController.text);
                 Navigator.pop(context);
               },
@@ -82,7 +83,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
                     color: Theme.of(context).errorColor,
                     title: 'Remove',
                     onPressed: () {
-                      todoProvider.removeTodo(widget.todoModel);
+                      _todoProvider.removeTodo(widget.todoModel);
                       Navigator.pop(context);
                     },
                   ),
@@ -92,13 +93,20 @@ class _TodoEditPageState extends State<TodoEditPage> {
     );
   }
 
-  Future<DateTime> chooseDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime> _pickDate(
+    BuildContext context,
+    TodoProvider todoProvider,
+  ) async {
+    final pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: todoProvider.date,
       firstDate: DateTime(2020),
       lastDate: DateTime(2050),
     );
-    return date;
+    if (pickedDate != null) {
+      return pickedDate;
+    } else {
+      return null;
+    }
   }
 }

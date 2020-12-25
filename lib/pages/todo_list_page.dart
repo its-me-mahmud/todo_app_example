@@ -1,7 +1,8 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app_example/models/todo_model.dart';
 
+import '../models/todo_model.dart';
 import '../providers/todo_provider.dart';
 import '../utils/routes.dart';
 
@@ -35,9 +36,13 @@ class TodoListPage extends StatelessWidget {
                       return ListTile(
                         leading: CircleAvatar(child: Text('${index + 1}')),
                         title: Text(todoModel.task),
+                        subtitle: Text(formatDate(
+                          DateTime.parse(todoModel.date),
+                          [dd, '-', mm, '-', yyyy],
+                        )),
                         trailing: IconButton(
                           color: Theme.of(context).primaryColor,
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                           onPressed: () {
                             Navigator.pushNamed(
                               context,

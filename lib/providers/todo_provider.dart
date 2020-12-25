@@ -4,18 +4,25 @@ import 'package:uuid/uuid.dart';
 import '../models/todo_model.dart';
 
 class TodoProvider extends ChangeNotifier {
-  var _uuid = Uuid();
   List<TodoModel> _todos = [];
+  var _uuid = Uuid();
+  DateTime _date = DateTime.now();
 
   get todos => _todos;
+  get date => _date;
+
+  set changeDate(DateTime date) {
+    _date = date;
+    notifyListeners();
+  }
 
   void saveTodo(String task) {
     _todos = [
       ..._todos,
       TodoModel(
         id: _uuid.v4(),
-        task: task,
-        date: DateTime.now().toString(),
+        task: task.trim(),
+        date: _date.toIso8601String(),
       ),
     ];
     print('add id: ${_uuid.v4().toString()}');
@@ -28,8 +35,8 @@ class TodoProvider extends ChangeNotifier {
         if (todoModel.id == id)
           TodoModel(
             id: todoModel.id,
-            task: task,
-            date: DateTime.now().toString(),
+            task: task.trim(),
+            date: _date.toIso8601String(),
           )
         else
           todoModel,
