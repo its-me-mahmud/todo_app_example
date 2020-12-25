@@ -20,12 +20,8 @@ class _TodoEditPageState extends State<TodoEditPage> {
   @override
   void initState() {
     super.initState();
-    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
     if (widget.todoModel != null) {
       _taskController.text = widget.todoModel.task;
-      todoProvider.loadTodos(widget.todoModel);
-    } else {
-      todoProvider.loadTodos(null);
     }
   }
 
@@ -52,10 +48,9 @@ class _TodoEditPageState extends State<TodoEditPage> {
               minLines: 1,
               maxLines: 5,
               decoration: InputDecoration(
-                labelText: 'Todo',
-                hintText: 'Enter your todo',
+                labelText: 'Task',
+                hintText: 'Enter your task',
               ),
-              onChanged: (value) => todoProvider.changeTask = value,
             ),
             const SizedBox(height: 16),
             Row(
@@ -74,17 +69,11 @@ class _TodoEditPageState extends State<TodoEditPage> {
               color: (widget.todoModel == null) ? Colors.green : Colors.blue,
               title: (widget.todoModel == null) ? 'Save' : 'Update',
               onPressed: () {
-                // (widget.todoModel == null)
-                //     ? todoProvider.saveTodo()
-                //     : todoProvider.updateTodo(widget.todoModel.id);
-                // Navigator.pop(context);
-                if (widget.todoModel == null) {
-                  todoProvider.saveTodo();
-                  Navigator.pop(context);
-                } else {
-                  todoProvider.updateTodo(widget.todoModel.id);
-                  Navigator.pop(context);
-                }
+                (widget.todoModel == null)
+                    ? todoProvider.saveTodo(_taskController.text)
+                    : todoProvider.updateTodo(
+                        widget.todoModel.id, _taskController.text);
+                Navigator.pop(context);
               },
             ),
             (widget.todoModel == null)
@@ -93,7 +82,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
                     color: Theme.of(context).errorColor,
                     title: 'Remove',
                     onPressed: () {
-                      todoProvider.removeTodo(widget.todoModel.id);
+                      todoProvider.removeTodo(widget.todoModel);
                       Navigator.pop(context);
                     },
                   ),

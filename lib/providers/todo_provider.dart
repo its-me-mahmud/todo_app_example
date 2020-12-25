@@ -5,66 +5,43 @@ import '../models/todo_model.dart';
 
 class TodoProvider extends ChangeNotifier {
   var _uuid = Uuid();
-  String _id;
-  String _task;
-  DateTime _date;
   List<TodoModel> _todos = [];
 
-  String get todo => _task;
-  DateTime get date => _date;
-  List<TodoModel> get todos => _todos;
+  get todos => _todos;
 
-  set changeDate(DateTime date) {
-    _date = date;
+  void saveTodo(String task) {
+    _todos = [
+      ..._todos,
+      TodoModel(
+        id: _uuid.v4(),
+        task: task,
+        date: DateTime.now().toString(),
+      ),
+    ];
+    print('add id: ${_uuid.v4().toString()}');
     notifyListeners();
   }
 
-  set changeTask(String task) {
-    _task = task;
+  void updateTodo(String id, String task) {
+    _todos = [
+      for (final todoModel in _todos)
+        if (todoModel.id == id)
+          TodoModel(
+            id: todoModel.id,
+            task: task,
+            date: DateTime.now().toString(),
+          )
+        else
+          todoModel,
+    ];
+    print('update id: $id');
+    print('task: $task');
     notifyListeners();
   }
 
-  loadTodos(TodoModel todoModel) {
-    if (todoModel != null) {
-      _id = todoModel.id;
-      _task = todoModel.task;
-      _date = DateTime.parse(todoModel.date);
-    } else {
-      _id = null;
-      _task = null;
-      _date = DateTime.now();
-    }
-  }
-
-  void saveTodo() {
-    if (_id == null) {
-      _todos.add(
-        TodoModel(
-          id: _uuid.v4(),
-          task: _task,
-          date: _date.toIso8601String(),
-        ),
-      );
-      // print('add: ${_uuid.v4().toString()}');
-      notifyListeners();
-    }
-  }
-
-  void updateTodo(String id) {
-    _todos.firstWhere((todo) => todo.id == id).copyWith(
-          id: id,
-          task: _task,
-          date: _date.toIso8601String(),
-        );
-    print('update: $id');
-    print('task: $_task');
-    print('date: $_date');
-    notifyListeners();
-  }
-
-  void removeTodo(String id) {
-    _todos.removeWhere((todo) => todo.id == id);
-    print('delete: $id');
+  void removeTodo(TodoModel todoModel) {
+    _todos = _todos.where((todo) => todo.id != todoModel.id).toList();
+    print('delete id: ${todoModel.id}');
     notifyListeners();
   }
 }
