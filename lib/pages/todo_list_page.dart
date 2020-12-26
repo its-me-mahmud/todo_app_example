@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,6 +35,10 @@ class TodoListPage extends ConsumerWidget {
                     return ListTile(
                       leading: CircleAvatar(child: Text('${index + 1}')),
                       title: Text(todoModel.task),
+                      subtitle: Text(
+                        formatDate(DateTime.parse(todoModel.date),
+                            [dd, '-', mm, '-', yyyy]),
+                      ),
                       trailing: IconButton(
                         color: Theme.of(context).primaryColor,
                         icon: Icon(Icons.edit),

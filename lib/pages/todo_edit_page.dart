@@ -20,8 +20,13 @@ class _TodoEditPageState extends State<TodoEditPage> {
   @override
   void initState() {
     super.initState();
+    final _todoProvider = context.read(todoProvider);
     if (widget.todoModel != null) {
       _taskController.text = widget.todoModel.task;
+      _todoProvider.changeDate = DateTime.parse(widget.todoModel.date);
+    } else {
+      _taskController.text = null;
+      _todoProvider.changeDate = DateTime.now();
     }
   }
 
@@ -36,6 +41,19 @@ class _TodoEditPageState extends State<TodoEditPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.todoModel != null ? 'Edit todo' : 'Add todo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () {
+              final _todoProvider = context.read(todoProvider);
+              _pickDate(context, _todoProvider).then((value) {
+                if (value != null) {
+                  _todoProvider.changeDate = value;
+                }
+              });
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16).copyWith(bottom: 0),
@@ -43,6 +61,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
+              autofocus: true,
               controller: _taskController,
               minLines: 1,
               maxLines: 5,
@@ -51,19 +70,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
                 hintText: 'Enter your task',
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('data'),
-                ReusableButton(
-                  color: Theme.of(context).primaryColor,
-                  title: 'Choose Date',
-                  onPressed: () => chooseDate(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             ReusableButton(
               color: (widget.todoModel == null) ? Colors.green : Colors.blue,
               title: (widget.todoModel == null) ? 'Save' : 'Update',
@@ -92,13 +99,20 @@ class _TodoEditPageState extends State<TodoEditPage> {
     );
   }
 
-  Future<DateTime> chooseDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime> _pickDate(
+    BuildContext context,
+    TodoProvider todoProvider,
+  ) async {
+    final pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: todoProvider.date,
       firstDate: DateTime(2020),
       lastDate: DateTime(2050),
     );
-    return date;
+    if (pickedDate != null) {
+      return pickedDate;
+    } else {
+      return null;
+    }
   }
 }

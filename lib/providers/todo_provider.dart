@@ -9,20 +9,15 @@ final todoProvider = StateNotifierProvider<TodoProvider>((ref) {
 
 class TodoProvider extends StateNotifier<List<TodoModel>> {
   final _uuid = Uuid();
+  DateTime _date = DateTime.now();
 
   TodoProvider({List<TodoModel> initialTodos}) : super(initialTodos ?? []);
 
-  // loadTodos(TodoModel todoModel) {
-  //   if (todoModel != null) {
-  //     _id = todoModel.id;
-  //     _task = todoModel.task;
-  //     _date = DateTime.parse(todoModel.date);
-  //   } else {
-  //     _id = null;
-  //     _task = null;
-  //     _date = DateTime.now();
-  //   }
-  // }
+  get date => _date;
+
+  set changeDate(DateTime date) {
+    _date = date;
+  }
 
   void saveTodo(String task) {
     state = [
@@ -30,10 +25,9 @@ class TodoProvider extends StateNotifier<List<TodoModel>> {
       TodoModel(
         id: _uuid.v4(),
         task: task,
-        date: DateTime.now().toString(),
+        date: _date.toIso8601String(),
       )
     ];
-    print('add: ${_uuid.v4().toString()}');
   }
 
   void updateTodo(String id, String task) {
@@ -43,17 +37,14 @@ class TodoProvider extends StateNotifier<List<TodoModel>> {
           TodoModel(
             id: todoModel.id,
             task: task,
-            date: DateTime.now().toString(),
+            date: _date.toIso8601String(),
           )
         else
           todoModel,
     ];
-    print('update: $id');
-    print(task);
   }
 
   void removeTodo(TodoModel todoModel) {
     state = state.where(((todo) => todo.id != todoModel.id)).toList();
-    print('delete: ${todoModel.id}');
   }
 }
