@@ -20,8 +20,13 @@ class _TodoEditPageState extends State<TodoEditPage> {
   @override
   void initState() {
     super.initState();
+    final _todoProvider = Provider.of<TodoProvider>(context, listen: false);
     if (widget.todoModel != null) {
       _taskController.text = widget.todoModel.task;
+      _todoProvider.changeDate = DateTime.parse(widget.todoModel.date);
+    } else {
+      _taskController.text = null;
+      _todoProvider.changeDate = DateTime.now();
     }
   }
 

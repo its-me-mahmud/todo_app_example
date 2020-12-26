@@ -5,7 +5,7 @@ import '../models/todo_model.dart';
 
 class TodoProvider extends ChangeNotifier {
   List<TodoModel> _todos = [];
-  var _uuid = Uuid();
+  final _uuid = Uuid();
   DateTime _date = DateTime.now();
 
   get todos => _todos;
@@ -25,7 +25,6 @@ class TodoProvider extends ChangeNotifier {
         date: _date.toIso8601String(),
       ),
     ];
-    print('add id: ${_uuid.v4().toString()}');
     notifyListeners();
   }
 
@@ -41,14 +40,11 @@ class TodoProvider extends ChangeNotifier {
         else
           todoModel,
     ];
-    print('update id: $id');
-    print('task: $task');
     notifyListeners();
   }
 
   void removeTodo(TodoModel todoModel) {
     _todos = _todos.where((todo) => todo.id != todoModel.id).toList();
-    print('delete id: ${todoModel.id}');
     notifyListeners();
   }
 }
