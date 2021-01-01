@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../pages/todo_edit_page.dart';
-import '../pages/todo_list_page.dart';
+import '../pages/edit_page.dart';
+import '../pages/home_page.dart';
 
 const todoList = '/';
 const todoEdit = '/todo-add';
 
 final routes = {
-  todoList: (context) => TodoListPage(),
-  todoEdit: (context) => TodoEditPage(
+  todoList: (context) => HomePage(),
+  todoEdit: (context) => EditPage(
         todoModel: ModalRoute.of(context).settings.arguments,
       ),
 };

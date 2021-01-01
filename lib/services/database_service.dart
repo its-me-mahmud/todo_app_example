@@ -59,7 +59,7 @@ class DatabaseService {
     return todoList;
   }
 
-  Future<TodoModel> insertTodo(TodoModel todo) async {
+  Future<TodoModel> insertTodo({TodoModel todo}) async {
     final db = await database;
     todo.id = await db.insert(TABLE_NAME, todo.toMap());
     return todo;

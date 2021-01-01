@@ -1,46 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+import '../bloc/todo_bloc.dart';
 import '../models/todo_model.dart';
-import '../providers/todo_provider.dart';
 import '../widgets/reusable_button.dart';
 
-class TodoEditPage extends StatefulWidget {
+class EditPage extends StatefulWidget {
   final TodoModel todoModel;
 
-  const TodoEditPage({this.todoModel});
+  const EditPage({this.todoModel});
 
   @override
-  _TodoEditPageState createState() => _TodoEditPageState();
+  _EditPageState createState() => _EditPageState();
 }
 
-class _TodoEditPageState extends State<TodoEditPage> {
+class _EditPageState extends State<EditPage> {
+  TodoBloc _todoBloc;
   final _taskController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    final _todoProvider = Provider.of<TodoProvider>(context, listen: false);
+    _todoBloc = context.read<TodoBloc>();
     if (widget.todoModel != null) {
       _taskController.text = widget.todoModel.task;
       // _todoProvider.changeDate = DateTime.parse(widget.todoModel.createdDate);
-      _todoProvider.getAllTodo(widget.todoModel);
+      _todoBloc.add(FetchTodo());
     } else {
       // _taskController.text = null;
       // _todoProvider.changeDate = DateTime.now();
-      _todoProvider.getAllTodo(null);
+      // _todoBloc.add(FetchTodo());
     }
   }
 
   @override
   void dispose() {
     super.dispose();
+    _todoBloc.close();
     _taskController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _todoProvider = Provider.of<TodoProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.todoModel != null ? 'Edit todo' : 'Add todo'),
@@ -48,11 +50,11 @@ class _TodoEditPageState extends State<TodoEditPage> {
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () {
-              _pickDate(context, _todoProvider).then((value) {
-                if (value != null) {
-                  _todoProvider.changeDate = value;
-                }
-              });
+              // _pickDate(context, _todoBloc).then((value) {
+              //   if (value != null) {
+              //     _todoBloc.changeDate = value;
+              //   }
+              // });
             },
           ),
         ],
@@ -71,7 +73,8 @@ class _TodoEditPageState extends State<TodoEditPage> {
                 labelText: 'Task',
                 hintText: 'Enter your task',
               ),
-              onSubmitted: (value) => _todoProvider.changeTask = value,
+              onSubmitted: (value) =>
+                  _todoBloc.add(InsertTodo(todo: widget.todoModel)),
             ),
             const SizedBox(height: 32),
             ReusableButton(
@@ -79,9 +82,11 @@ class _TodoEditPageState extends State<TodoEditPage> {
               title: (widget.todoModel == null) ? 'Save' : 'Update',
               onPressed: () {
                 (widget.todoModel == null)
-                    ? _todoProvider.addTodo()
-                    : _todoProvider.editTodo(
-                        widget.todoModel.id, _taskController.text);
+                    ? _todoBloc.add(InsertTodo(todo: widget.todoModel))
+                    : _todoBloc.add(UpdateTodo(
+                        todoIndex: widget.todoModel.id,
+                        newTodo: widget.todoModel,
+                      ));
                 Navigator.pop(context);
               },
             ),
@@ -91,7 +96,7 @@ class _TodoEditPageState extends State<TodoEditPage> {
                     color: Theme.of(context).errorColor,
                     title: 'Remove',
                     onPressed: () {
-                      _todoProvider.deleteTodo(widget.todoModel.id);
+                      _todoBloc.add(DeleteTodo(todoIndex: widget.todoModel.id));
                       Navigator.pop(context);
                     },
                   ),
@@ -103,11 +108,11 @@ class _TodoEditPageState extends State<TodoEditPage> {
 
   Future<DateTime> _pickDate(
     BuildContext context,
-    TodoProvider todoProvider,
+    TodoBloc todoBloc,
   ) async {
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: todoProvider.createdDate,
+      // initialDate: todoBloc.createdDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2050),
     );
