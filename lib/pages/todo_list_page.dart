@@ -9,15 +9,29 @@ import '../utils/routes.dart';
 class TodoListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _todoProvider = Provider.of<TodoProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Todos'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16).copyWith(bottom: 0),
-        child: Consumer<TodoProvider>(
-          builder: (_, todoProvider, __) {
-            return todoProvider.todos.isEmpty
+        child: FutureBuilder<List<TodoModel>>(
+          future: _todoProvider.todos,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: const Text(
+                  'Something went wrong!',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }
+            return (snapshot.data.isEmpty || snapshot.data != null)
                 ? Center(
                     child: const Text(
                       'Empty todos!',
@@ -29,15 +43,16 @@ class TodoListPage extends StatelessWidget {
                     ),
                   )
                 : ListView.separated(
-                    itemCount: todoProvider.todos.length,
-                    separatorBuilder: (context, index) => Divider(),
+                    itemCount: snapshot.data.length,
+                    separatorBuilder: (_, __) => Divider(),
                     itemBuilder: (context, index) {
-                      TodoModel todoModel = todoProvider.todos[index];
+                      final todo = snapshot.data[index];
+                      print('Todo: { ${todo.task} }');
                       return ListTile(
                         leading: CircleAvatar(child: Text('${index + 1}')),
-                        title: Text(todoModel.task),
+                        title: Text(todo.task),
                         subtitle: Text(formatDate(
-                          DateTime.parse(todoModel.date),
+                          DateTime.parse(todo.createdDate),
                           [dd, '-', mm, '-', yyyy],
                         )),
                         trailing: IconButton(
@@ -47,7 +62,7 @@ class TodoListPage extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               todoEdit,
-                              arguments: todoModel,
+                              arguments: todo,
                             );
                           },
                         ),
