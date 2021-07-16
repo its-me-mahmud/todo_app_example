@@ -1,9 +1,9 @@
 import '../services/database_service.dart';
 
 class TodoModel {
-  int id;
-  String task;
-  String createdDate;
+  int? id;
+  String? task;
+  String? createdDate;
 
   TodoModel({
     this.id,

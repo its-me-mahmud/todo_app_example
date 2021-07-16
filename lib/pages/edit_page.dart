@@ -7,7 +7,7 @@ import '../models/todo_model.dart';
 import '../widgets/reusable_button.dart';
 
 class EditPage extends StatefulWidget {
-  final TodoModel todoModel;
+  final TodoModel? todoModel;
 
   const EditPage({this.todoModel});
 
@@ -16,7 +16,7 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
-  TodoBloc _todoBloc;
+  late TodoBloc _todoBloc;
   final _taskController = TextEditingController();
 
   @override
@@ -24,7 +24,7 @@ class _EditPageState extends State<EditPage> {
     super.initState();
     _todoBloc = context.read<TodoBloc>();
     if (widget.todoModel != null) {
-      _taskController.text = widget.todoModel.task;
+      _taskController.text = widget.todoModel!.task!;
       // _todoProvider.changeDate = DateTime.parse(widget.todoModel.createdDate);
       _todoBloc.add(FetchTodo());
     } else {
@@ -84,7 +84,7 @@ class _EditPageState extends State<EditPage> {
                 (widget.todoModel == null)
                     ? _todoBloc.add(InsertTodo(todo: widget.todoModel))
                     : _todoBloc.add(UpdateTodo(
-                        todoIndex: widget.todoModel.id,
+                        todoIndex: widget.todoModel!.id,
                         newTodo: widget.todoModel,
                       ));
                 Navigator.pop(context);
@@ -96,7 +96,8 @@ class _EditPageState extends State<EditPage> {
                     color: Theme.of(context).errorColor,
                     title: 'Remove',
                     onPressed: () {
-                      _todoBloc.add(DeleteTodo(todoIndex: widget.todoModel.id));
+                      _todoBloc
+                          .add(DeleteTodo(todoIndex: widget.todoModel!.id));
                       Navigator.pop(context);
                     },
                   ),
@@ -106,20 +107,20 @@ class _EditPageState extends State<EditPage> {
     );
   }
 
-  Future<DateTime> _pickDate(
-    BuildContext context,
-    TodoBloc todoBloc,
-  ) async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      // initialDate: todoBloc.createdDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2050),
-    );
-    if (pickedDate != null) {
-      return pickedDate;
-    } else {
-      return null;
-    }
-  }
+  // Future<DateTime?> _pickDate(
+  //   BuildContext context,
+  //   TodoBloc todoBloc,
+  // ) async {
+  //   final pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: todoBloc.createdDate,
+  //     firstDate: DateTime(2020),
+  //     lastDate: DateTime(2050),
+  //   );
+  //   if (pickedDate != null) {
+  //     return pickedDate;
+  //   } else {
+  //     return null;
+  //   }
+  // }
 }

@@ -4,20 +4,20 @@ abstract class TodoEvent extends Equatable {
   const TodoEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class InsertTodo extends TodoEvent {
-  final TodoModel todo;
+  final TodoModel? todo;
 
   const InsertTodo({this.todo});
 
-  InsertTodo copyWith({TodoModel todo}) {
+  InsertTodo copyWith({TodoModel? todo}) {
     return InsertTodo(todo: todo ?? this.todo);
   }
 
   @override
-  List<Object> get props => [todo];
+  List<Object?> get props => [todo];
 }
 
 class FetchTodo extends TodoEvent {
@@ -25,12 +25,12 @@ class FetchTodo extends TodoEvent {
 }
 
 class UpdateTodo extends TodoEvent {
-  final int todoIndex;
-  final TodoModel newTodo;
+  final int? todoIndex;
+  final TodoModel? newTodo;
 
   const UpdateTodo({this.todoIndex, this.newTodo});
 
-  UpdateTodo copyWith({int index, TodoModel todo}) {
+  UpdateTodo copyWith({int? index, TodoModel? todo}) {
     return UpdateTodo(
       todoIndex: index ?? this.todoIndex,
       newTodo: todo ?? this.newTodo,
@@ -38,18 +38,18 @@ class UpdateTodo extends TodoEvent {
   }
 
   @override
-  List<Object> get props => [todoIndex, newTodo];
+  List<Object?> get props => [todoIndex, newTodo];
 }
 
 class DeleteTodo extends TodoEvent {
-  final int todoIndex;
+  final int? todoIndex;
 
   const DeleteTodo({this.todoIndex});
 
-  UpdateTodo copyWith({int index, TodoModel todo}) {
+  UpdateTodo copyWith({int? index, TodoModel? todo}) {
     return UpdateTodo(todoIndex: index ?? this.todoIndex);
   }
 
   @override
-  List<Object> get props => [todoIndex];
+  List<Object?> get props => [todoIndex];
 }

@@ -4,7 +4,7 @@ abstract class TodoState extends Equatable {
   const TodoState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class TodoInitial extends TodoState {
@@ -12,23 +12,23 @@ class TodoInitial extends TodoState {
 }
 
 class TodoSuccess extends TodoState {
-  final List<TodoModel> todos;
+  final List<TodoModel>? todos;
 
   const TodoSuccess({this.todos});
 
-  TodoSuccess copyWith({List<TodoModel> todos}) {
+  TodoSuccess copyWith({List<TodoModel>? todos}) {
     return TodoSuccess(todos: todos ?? this.todos);
   }
 
   @override
-  List<Object> get props => [todos];
+  List<Object?> get props => [todos];
 }
 
 class TodoFailure extends TodoState {
-  final String error;
+  final String? error;
 
   const TodoFailure({this.error});
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [error];
 }

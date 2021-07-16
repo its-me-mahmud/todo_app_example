@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
             if (state is TodoFailure) {
               return Center(
                 child: Text(
-                  state.error,
+                  state.error!,
                   style: TextStyle(
                     fontSize: 30,
                     color: Colors.red,
@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
                 ),
               );
             } else if (state is TodoSuccess) {
-              return (state.todos.isEmpty || state.todos != null)
+              return (state.todos!.isEmpty || state.todos != null)
                   ? Center(
                       child: const Text(
                         'Empty todos!',
@@ -43,16 +43,16 @@ class HomePage extends StatelessWidget {
                       ),
                     )
                   : ListView.separated(
-                      itemCount: state.todos.length,
+                      itemCount: state.todos!.length,
                       separatorBuilder: (_, __) => Divider(),
                       itemBuilder: (context, index) {
-                        final todo = state.todos[index];
+                        final todo = state.todos![index];
                         print('Todo: { ${todo.task} }');
                         return ListTile(
                           leading: CircleAvatar(child: Text('${index + 1}')),
-                          title: Text(todo.task),
+                          title: Text(todo.task!),
                           subtitle: Text(formatDate(
-                            DateTime.parse(todo.createdDate),
+                            DateTime.parse(todo.createdDate!),
                             [dd, '-', mm, '-', yyyy],
                           )),
                           trailing: IconButton(

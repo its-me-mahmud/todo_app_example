@@ -6,9 +6,9 @@ class ReusableButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const ReusableButton({
-    @required this.color,
-    @required this.title,
-    @required this.onPressed,
+    required this.color,
+    required this.title,
+    required this.onPressed,
   });
 
   @override

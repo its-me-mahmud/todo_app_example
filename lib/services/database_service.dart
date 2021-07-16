@@ -15,9 +15,9 @@ class DatabaseService {
   DatabaseService._();
   static final instance = DatabaseService._();
 
-  Database _database;
+  Database? _database;
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
     if (_database != null) {
       return _database;
     }
@@ -46,7 +46,7 @@ class DatabaseService {
   }
 
   Future<List<TodoModel>> getTodos() async {
-    final db = await database;
+    final db = await (database as FutureOr<Database>);
     var todos = await db.query(
       TABLE_NAME,
       columns: [COLUMN_ID, COLUMN_TASK, COLUMN_CREATED_DATE],
@@ -59,8 +59,8 @@ class DatabaseService {
     return todoList;
   }
 
-  Future<TodoModel> insertTodo({TodoModel todo}) async {
-    final db = await database;
+  Future<TodoModel> insertTodo({required TodoModel todo}) async {
+    final db = await (database as FutureOr<Database>);
     todo.id = await db.insert(TABLE_NAME, todo.toMap());
     return todo;
   }

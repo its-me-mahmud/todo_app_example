@@ -9,18 +9,18 @@ part 'todo_event.dart';
 part 'todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final DatabaseService _databaseService;
+  final DatabaseService? _databaseService;
 
-  TodoBloc({DatabaseService databaseService})
+  TodoBloc({DatabaseService? databaseService})
       : _databaseService = databaseService,
         super(TodoInitial());
 
   @override
   Stream<TodoState> mapEventToState(TodoEvent event) async* {
     if (event is InsertTodo) {
-      await _databaseService.insertTodo(todo: event.todo);
+      await _databaseService!.insertTodo(todo: event.todo!);
     } else if (event is FetchTodo) {
-      final todos = await _databaseService.getTodos();
+      final todos = await _databaseService!.getTodos();
       yield TodoSuccess(todos: todos);
     }
   }
